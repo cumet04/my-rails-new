@@ -36,19 +36,13 @@ module Mnt
 
     config.action_mailer.perform_caching = false
 
-    config.log_level = :debug
+    config.log_level = :info
     config.log_tags = [ :request_id ]
-    config.i18n.fallbacks = true
-
-    config.active_support.deprecation = :notify
+    config.logger = ActiveSupport::Logger.new(STDOUT)
     config.log_formatter = ::Logger::Formatter.new
+    config.active_support.deprecation = :notify
 
-    if ENV["RAILS_LOG_TO_STDOUT"].present?
-      logger           = ActiveSupport::Logger.new(STDOUT)
-      logger.formatter = config.log_formatter
-      config.logger    = ActiveSupport::TaggedLogging.new(logger)
-    end
-
+    config.i18n.fallbacks = true
     config.active_record.dump_schema_after_migration = false
 
     # app configs
