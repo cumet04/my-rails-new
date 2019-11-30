@@ -24,9 +24,33 @@ module Mnt
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
+    # rails environments configs
+    config.cache_classes = true
+    config.eager_load = true
+    config.consider_all_requests_local = false
+    config.action_controller.perform_caching = true
+
+    config.public_file_server.enabled = false
+    config.active_storage.service = :local
+    config.cache_store = :null_store
+
+    config.action_mailer.perform_caching = false
+
+    config.log_level = :debug
+    config.log_tags = [ :request_id ]
+    config.i18n.fallbacks = true
+
+    config.active_support.deprecation = :notify
+    config.log_formatter = ::Logger::Formatter.new
+
+    if ENV["RAILS_LOG_TO_STDOUT"].present?
+      logger           = ActiveSupport::Logger.new(STDOUT)
+      logger.formatter = config.log_formatter
+      config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    end
+
+    config.active_record.dump_schema_after_migration = false
+
+    # app configs
   end
 end
