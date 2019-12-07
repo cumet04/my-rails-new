@@ -6,6 +6,7 @@ Rails.application.configure do
   config.public_file_server.enabled = true
 
   config.consider_all_requests_local = true
+  BetterErrors::Middleware.allow_ip! "0.0.0.0/0"
 
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false

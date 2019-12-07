@@ -9,6 +9,9 @@ gem 'puma', '~> 4.1'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 group :development do
-  gem 'web-console', '>= 3.3.0'
-  gem 'spring'
+  gem "spring"
+
+  gem "web-console", ">= 3.3.0"
+  gem "better_errors"
+  gem "binding_of_caller"
 end
