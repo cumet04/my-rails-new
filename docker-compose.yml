@@ -1,0 +1,27 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - "./backend:/app"
+      - /app/.bundle
+    environment:
+      - RAILS_DB_HOST=db
+      - RAILS_DB_DATABASE=railsapp
+      - RAILS_DB_USERNAME=root
+      - RAILS_DB_PASSWORD=""
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - db:/var/lib/mysql
+    logging:
+      driver: none
+
+volumes:
+  db:
