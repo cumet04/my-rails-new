@@ -11,6 +11,7 @@ services:
       - RAILS_DB_DATABASE=railsapp
       - RAILS_DB_USERNAME=root
       - RAILS_DB_PASSWORD=""
+      - RAILS_REDIS_HOST=redis
     ports:
       - "3000:3000"
 
@@ -20,6 +21,11 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
       - db:/var/lib/mysql
+    logging:
+      driver: none
+
+  redis:
+    image: redis:5.0
     logging:
       driver: none
 

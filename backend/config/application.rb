@@ -45,6 +45,16 @@ module Mnt
     config.i18n.fallbacks = true
     config.active_record.dump_schema_after_migration = false
 
+    # middleware
+    config.session_store(
+      :redis_store,
+      servers: {
+        host: ENV.fetch("RAILS_REDIS_HOST"),
+        port: ENV.fetch("RAILS_REDIS_PORT", 6379),
+        namespace: "sessions",
+      }, expire_in: 3.days, secure: true,
+    )
+
     # app configs
   end
 end

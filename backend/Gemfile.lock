@@ -127,6 +127,16 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.20.3, < 2.0)
     rake (13.0.1)
+    redis (4.1.3)
+    redis-actionpack (5.1.0)
+      actionpack (>= 4.0, < 7)
+      redis-rack (>= 1, < 3)
+      redis-store (>= 1.1.0, < 2)
+    redis-rack (2.0.6)
+      rack (>= 1.5, < 3)
+      redis-store (>= 1.2, < 2)
+    redis-store (1.8.1)
+      redis (>= 4, < 5)
     spring (2.1.0)
     sprockets (4.0.0)
       concurrent-ruby (~> 1.0)
@@ -160,6 +170,7 @@ DEPENDENCIES
   mysql2
   puma (~> 4.1)
   rails (~> 6.0.1)
+  redis-actionpack
   spring
   web-console (>= 3.3.0)
 
