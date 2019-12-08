@@ -1,0 +1,17 @@
+- name: enable lamp repository
+  shell: "amazon-linux-extras enable lamp-mariadb10.2-php7.2"
+  changed_when: false
+
+- name: install MariaDB-server
+  yum:
+    name: "{{ item }}"
+  loop:
+    - mariadb
+    - mariadb-server
+    - mariadb-devel
+
+- name: enable mariadb
+  systemd:
+    name: mariadb
+    state: started
+    enabled: yes

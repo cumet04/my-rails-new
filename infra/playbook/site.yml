@@ -1,0 +1,22 @@
+# ミドルウェア系（初期投入から変わらない系）
+- hosts: all
+  user: admin
+  become: yes
+  vars_files:
+    - common_vars.yml
+  roles:
+    - common
+    - ruby
+    - codedeploy_agent
+    - { role: mariadb, when: use_mariadb }
+    - { role: redis, when: use_redis }
+
+- hosts: all
+  user: admin
+  become: yes
+  vars_files:
+    - common_vars.yml
+  roles:
+    - { role: cloudwatch_agent, when: use_cloudwatch_agent }
+    - nginx
+    - rails_app

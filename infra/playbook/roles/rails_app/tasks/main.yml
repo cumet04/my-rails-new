@@ -1,0 +1,73 @@
+- name: enable mariadb repository
+  shell: "amazon-linux-extras enable lamp-mariadb10.2-php7.2"
+  changed_when: false
+- name: install package dependencies
+  yum:
+    name: "{{ item }}"
+  loop:
+    - mariadb-devel
+
+- name: set group for deploy user
+  # codedeployによるデプロイをec2-userで実行するためg+wに対して書き込みできるようにしておく
+  user:
+    name: ec2-user
+    group: "{{ rails_puma_user }}"
+
+- name: check pumaenv exists
+  stat:
+    path: /etc/profile.d/pumaenv
+  register: pumaenv
+- name: puts pumaenv skeleton
+  template:
+    src: pumaenv
+    dest: /etc/profile.d/pumaenv
+  when: not pumaenv.stat.exists
+
+- name: mkdir deploy path
+  file:
+    path: "{{ item }}"
+    owner: "{{ rails_puma_user }}"
+    group: "{{ rails_puma_user }}"
+    mode: "775"
+    state: directory
+  loop:
+    - "{{ rails_app_path }}"
+    - "{{ rails_app_path }}/shared"
+    - "{{ rails_app_path }}/shared/.bundle"
+    - "{{ rails_app_path }}/shared/log"
+    - "{{ rails_app_path }}/shared/public"
+    - "{{ rails_app_path }}/shared/tmp/pids"
+    - "{{ rails_app_path }}/shared/tmp/cache"
+    - "{{ rails_app_path }}/shared/db/certs"
+    - "{{ rails_app_path }}/releases"
+
+- name: puts log dir symlink
+  file:
+    src: "{{ rails_app_path }}/shared/log"
+    dest: "/var/log/puma"
+    state: link
+    force: yes
+
+- name: puts logrotate cfg
+  template:
+    src: logrotate.d/puma
+    dest: /etc/logrotate.d/puma
+
+- name: puts puma.rb
+  template:
+    src: puma.rb
+    dest: "{{ rails_app_path }}/shared/puma.rb"
+  notify: restart puma
+
+- name: install systemd service
+  template:
+    src: puma.service
+    dest: /etc/systemd/system/puma.service
+    backup: yes
+  notify: restart puma
+
+- name: enable service
+  systemd:
+    name: puma
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,68 @@
+- name: enable nginx repository
+  shell: "amazon-linux-extras enable nginx1"
+  changed_when: false
+
+- name: install nginx
+  yum:
+    name: nginx
+  register: install_nginx
+
+- name: remove default files / directories
+  when: install_nginx.changed
+  file:
+    dest: "/etc/nginx/{{ item }}"
+    state: absent
+  loop:
+    - default.d
+    - fastcgi.conf
+    - fastcgi.conf.default
+    - fastcgi_params
+    - fastcgi_params.default
+    - koi-utf
+    - koi-win
+    - mime.types.default
+    - nginx.conf.default
+    - scgi_params
+    - scgi_params.default
+    - uwsgi_params
+    - uwsgi_params.default
+    - win-utf
+
+- name: mkdir directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "/etc/nginx/includes.d"
+    - "/etc/nginx/basic"
+
+- name: put service config
+  template:
+    src: "nginx.service"
+    dest: "/etc/systemd/system/nginx.service"
+    backup: yes
+  notify: reload nginx
+
+- name: put configs
+  template:
+    src: "nginx/{{ item.path }}"
+    dest: "/etc/nginx/{{ item.path }}"
+    backup: yes
+  with_filetree: templates/nginx
+  when: item.state == 'file'
+  notify: reload nginx
+
+- name: put files
+  copy:
+    src: "{{ item.path }}"
+    dest: "/etc/nginx/{{ item.path }}"
+    backup: yes
+  with_filetree: files/
+  when: item.state == 'file'
+  notify: reload nginx
+
+- name: enable nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes

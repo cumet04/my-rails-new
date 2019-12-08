@@ -1,0 +1,65 @@
+# rbenv
+
+- name: check rbenv dir
+  stat:
+    path: /opt/rbenv
+  register: rbenv_dir
+
+- name: setup rbenv
+  when: not rbenv_dir.stat.exists
+  block:
+    - name: ensure dependencies
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git
+        - gcc
+        - bzip2
+        - openssl-devel
+        - libyaml-devel
+        - libffi-devel
+        - readline-devel
+        - zlib-devel
+        - gdbm-devel
+        - ncurses-devel
+    - name: mkdir rbenv
+      file:
+        path: /opt/rbenv
+        state: directory
+    - name: install rbenv
+      git:
+        repo: https://github.com/rbenv/rbenv.git
+        dest: /opt/rbenv
+        update: no
+        accept_hostkey: yes
+    - name: install ruby-build
+      git:
+        repo: https://github.com/rbenv/ruby-build.git
+        dest: /opt/rbenv/plugins/ruby-build
+        update: no
+        accept_hostkey: yes
+    - name: put rbenv-profile sh
+      copy:
+        src: rbenv-profile.sh
+        dest: /etc/profile.d/rbenv-profile.sh
+
+# ruby
+
+- name: check ruby exists
+  shell: |
+    source /etc/profile.d/rbenv-profile.sh
+    rbenv versions | grep {{ ruby_version }}
+  register: ruby_exists
+  failed_when: false
+  changed_when: false
+  check_mode: no
+
+- name: setup ruby
+  when: ruby_exists.rc != 0
+  block:
+    - name: install ruby
+      shell: |
+        source /etc/profile.d/rbenv-profile.sh
+        rbenv install {{ ruby_version }}
+        rbenv global {{ ruby_version }}

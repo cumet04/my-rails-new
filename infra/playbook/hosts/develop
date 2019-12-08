@@ -1,0 +1,18 @@
+[web]
+dev.rails.app.example.com
+
+[all:vars]
+stage = develop
+server_name = "dev.rails.app.example.com"
+swap_size_gb = 0
+use_mariadb = true
+use_redis = true
+use_cloudwatch_agent = true
+use_basic_auth = false
+
+rails_env = devserver
+rails_puma_threads = "1, 2" # quotedにしないとpythonで展開されて"[1, 2]"とかになる
+rails_puma_workers = 2
+rails_puma_ram = 512
+rails_puma_frequency = 30
+rails_puma_rolling_restart_frequency = 3 * 3600
