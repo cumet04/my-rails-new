@@ -16,9 +16,10 @@ services:
       - "3000:3000"
 
   db:
-    image: mysql:5.7
+    image: mariadb:10.3
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_HOST: '%'
     volumes:
       - db:/var/lib/mysql
     logging:
