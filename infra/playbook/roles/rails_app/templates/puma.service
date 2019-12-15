@@ -1,0 +1,21 @@
+[Unit]
+Description=Puma Application Server
+After=network.target
+
+[Service]
+Type=simple
+User={{ rails_puma_user }}
+
+EnvironmentFile=/etc/profile.d/pumaenv
+Environment=RBENV_ROOT=/opt/rbenv
+
+WorkingDirectory={{ rails_app_path }}/current
+ExecStart=/opt/rbenv/bin/rbenv exec bundle exec puma -C {{ rails_app_path }}/shared/puma.rb
+ExecStop=/opt/rbenv/bin/rbenv exec bundle exec pumactl -S {{ rails_app_path }}/shared/tmp/pids/puma.state stop
+ExecReload=/opt/rbenv/bin/rbenv exec bundle exec pumactl -S {{ rails_app_path }}/shared/tmp/pids/puma.state phased-restart
+
+TimeoutSec=300
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+hostname: "{{ inventory_hostname }}"
+ruby_version: 2.6.5
+rails_app_path: /opt/www/rails_app
+rails_puma_port: 8080
+rails_puma_user: nginx

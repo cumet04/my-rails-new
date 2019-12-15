@@ -1,0 +1,13 @@
+/var/log/puma/*.log {
+    create 0644 {{ rails_puma_user }} {{ rails_puma_user }}
+    weekly
+    rotate 4
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        /bin/systemctl kill -s SIGHUP --kill-who=main puma > /dev/null 2>/dev/null || true
+        /bin/systemctl reload puma.service > /dev/null 2>/dev/null || true
+    endscript
+}

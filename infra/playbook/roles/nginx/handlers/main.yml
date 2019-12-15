@@ -1,0 +1,11 @@
+- name: nginx config test
+  shell: "nginx -t"
+  changed_when: false
+  listen: reload nginx
+
+- name: reload nginx service
+  systemd:
+    name: nginx
+    state: reloaded
+    daemon_reload: yes
+  listen: reload nginx

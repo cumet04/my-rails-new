@@ -1,0 +1,16 @@
+- name: check cloudwatch-agent exists
+  yum:
+    list: codedeploy-agent
+  register: cdagent_exist
+
+- name: install codedeploy-agent
+  when: cdagent_exist.results | selectattr("yumstate", "match", "installed") | list | length == 0
+  block:
+    - yum:
+        name: ruby
+        state: present
+    - shell: |
+        cd /tmp
+        curl -OL https://aws-codedeploy-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/latest/install
+        chmod +x ./install
+        ./install auto

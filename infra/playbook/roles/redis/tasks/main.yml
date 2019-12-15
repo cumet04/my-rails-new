@@ -1,0 +1,17 @@
+- name: enable epel repository
+  shell: "amazon-linux-extras enable epel"
+  changed_when: false
+
+- name: install epel-release
+  yum:
+    name: epel-release
+
+- name: install redis
+  yum:
+    name: redis
+
+- name: enable redis
+  systemd:
+    name: redis
+    state: started
+    enabled: yes
